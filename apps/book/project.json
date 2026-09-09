@@ -24,6 +24,7 @@
       },
       "configurations": {
         "production": {
+          "statsJson": true,
           "budgets": [
             {
               "type": "initial",
@@ -49,8 +50,8 @@
           "sourceMap": true,
           "fileReplacements": [
             {
-              "replace": "apps/book/src/environments/environment.ts",
-              "with": "apps/book/src/environments/environment.memory.ts"
+              "replace": "apps/book/src/app.routes.ts",
+              "with": "apps/book/src/app.routes.memory.ts"
             }
           ]
         }
@@ -101,6 +102,13 @@
       "executor": "nx:run-commands",
       "options": {
         "command": "npx vitest run apps/book/src --passWithNoTests"
+      }
+    },
+    "verify-production-bundle": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "command": "node tools/verify-book-production-bundle.mjs"
       }
     },
     "serve-static": {

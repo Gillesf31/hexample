@@ -10,6 +10,12 @@ export default defineConfig({
       '@hexa/appointments-ports': fileURLToPath(
         new URL('./libs/appointments/ports/src/index.ts', import.meta.url),
       ),
+      '@hexa/appointments-infrastructure/memory': fileURLToPath(
+        new URL(
+          './libs/appointments/infrastructure/src/memory/index.ts',
+          import.meta.url,
+        ),
+      ),
       '@hexa/appointments-infrastructure': fileURLToPath(
         new URL(
           './libs/appointments/infrastructure/src/index.ts',
@@ -24,6 +30,12 @@ export default defineConfig({
       ),
       '@hexa/appointments-feature': fileURLToPath(
         new URL('./libs/appointments/feature/src/index.ts', import.meta.url),
+      ),
+      '@hexa/appointments-shell/memory': fileURLToPath(
+        new URL(
+          './libs/appointments/shell/src/memory/index.ts',
+          import.meta.url,
+        ),
       ),
       '@hexa/appointments-shell': fileURLToPath(
         new URL('./libs/appointments/shell/src/index.ts', import.meta.url),

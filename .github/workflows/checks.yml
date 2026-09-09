@@ -47,7 +47,7 @@ jobs:
         run: npx prettier --check .
 
       - name: checks
-        run: npx nx run-many -t lint typecheck test build
+        run: npx nx run-many -t lint typecheck test build verify-production-bundle
 
       # Nx starts `book:serve-memory` itself as a continuous dependency of the
       # inferred `e2e` target — see the note in apps/book-e2e/playwright.config.mts.

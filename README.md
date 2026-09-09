@@ -154,20 +154,33 @@ route. `npx nx build book` prints the numbers if you want to check the claim.
 
 ## Choosing a data source
 
-`appointmentsRoutes` takes an `AppointmentsConfig` and hands it to the shell,
-which decides which adapter every port gets:
+The data source is selected by which shell entry point the build can reach, not
+by a runtime branch. The normal route dynamically imports the primary entry
+point and gives it only the API configuration it needs:
 
 ```ts
-{ dataSource: 'api' | 'memory', apiBaseUrl: string }
+import('@hexa/appointments-shell').then((m) => m.appointmentsRoutes({ apiBaseUrl }));
 ```
 
-The value comes from
-[`apps/book/src/environments/environment.ts`](apps/book/src/environments/environment.ts),
-and the `memory` build configuration swaps in `environment.memory.ts` through
-`fileReplacements`. Nothing reads a token or a global: the choice travels as an
-argument through the lazy route's dynamic import, which is also why a static
-import of the shell from `app.config.ts` is rejected by lint — it would pull the
-whole feature into the initial bundle.
+The `memory` build replaces that route file with one that imports the explicit
+secondary entry point:
+
+```ts
+import('@hexa/appointments-shell/memory').then((m) => m.appointmentsRoutes());
+```
+
+A secondary entry point is another import door into the same workspace library.
+The primary infrastructure entry point exports the HTTP and system-clock
+adapters; `@hexa/appointments-infrastructure/memory` alone exports the in-memory
+adapter and fixtures. Since the production route cannot reach either `/memory`
+entry point, Angular leaves those modules out of its graph instead of merely
+choosing not to instantiate them at runtime.
+
+The shell remains lazy: a static import from `app.config.ts` is rejected by
+lint because it would pull the feature into the initial bundle. The production
+build also writes `stats.json`, and `npx nx verify-production-bundle book`
+checks that the HTTP adapter is present while both memory entry points are
+absent.
 
 `serve-memory` is its own target rather than a `serve` configuration, because
 Nx `dependsOn` is per-target: a configuration would still have started

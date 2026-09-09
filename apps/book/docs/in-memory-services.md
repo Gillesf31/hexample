@@ -41,39 +41,36 @@ Prefer explicit test configuration for automated tests and explicit local or dep
 
 There can be exceptions, such as a short-lived internal demo or a carefully restricted support tool. In those cases, limit access, make the active data source obvious, and remove the flag when it is no longer needed.
 
-## Proposal: enable local data per feature
+## Select local data at build time
 
-Keep the production data-source providers as the default. For local development and tests, add a separate configuration that overrides only the features a developer wants to run in memory. A feature can therefore be enabled or disabled independently without changing its components or production implementation.
+Keep production and local composition behind separate entry points. A secondary entry point is another import path into the same workspace library, so it can expose development composition without adding another Nx project.
 
-1. Give each feature a service token (for example, `CATALOG_SERVICE` or `BOOKING_SERVICE`). Components depend only on their feature's token.
-2. Register the HTTP or production implementation as the default provider for every token.
-3. Create a development- and test-only provider list that can replace selected tokens with their in-memory implementations.
-4. Load that list only from the local-development or test bootstrap/configuration, never from the production bootstrap.
-
-For example, a local configuration can make the choice explicit in one place:
+For appointments, the two shell interfaces are:
 
 ```ts
-const localDataSources = {
-  catalog: 'memory',
-  booking: 'api',
-  customerProfile: 'memory',
-} as const;
+// Production
+import('@hexa/appointments-shell').then((m) => m.appointmentsRoutes({ apiBaseUrl }));
+
+// Local memory build
+import('@hexa/appointments-shell/memory').then((m) => m.appointmentsRoutes());
 ```
 
-The development bootstrap converts this map into provider overrides. A feature set to `'memory'` receives its in-memory service; one set to `'api'` keeps the default production service. Tests can use the same mechanism with their own small configuration.
+The build replaces the complete route module. It does not pass an `'api' | 'memory'` value into a module that imports both adapters. As a result, the production dependency graph has no path to the memory shell entry point, its adapter, or its fixtures.
 
-This keeps the toggle easy to find and review, allows different features to use different data sources, and prevents the local choice from being bundled into or evaluated by the production application. Keep personal local settings in an ignored file or inject them through a development-only environment configuration; commit a safe example file for the team.
+Use the same pattern independently for another feature if it later needs a local adapter: give that feature its own `/memory` entry point and build-time route replacement. Do not introduce a global runtime data-source map, because doing so makes production import every selectable implementation.
 
 ## Switching implementations
 
-Use dependency injection to select an implementation behind a service token or interface. The application code should depend on that abstraction, not on the in-memory or HTTP implementation directly.
+Within each entry point, use dependency injection to provide the implementation behind the same port. Application behaviour depends on that port, not on the in-memory or HTTP adapter directly.
 
 ```ts
-// Production or integration environment
-provideDataService(HttpDataService);
+// Primary entry point
+provideAppointmentsShell(httpAppointmentsProvider);
 
-// Test or local-development environment
-provideDataService(InMemoryDataService);
+// /memory entry point
+provideAppointmentsShell(inMemoryAppointmentsProvider);
 ```
 
-The exact syntax depends on the framework. The important part is that changing the data source does not require changing the feature or component code.
+The shared provider assembly is internal to the shell. Callers use only the route interface for their selected entry point, while the feature, state, and domain code remain unchanged.
+
+The production build emits its module graph to `stats.json`. The `verify-production-bundle` target fails if either appointments `src/memory/` folder appears in that graph, turning the build-time separation into an enforced property rather than a convention.

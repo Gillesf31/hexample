@@ -17,6 +17,9 @@
     "paths": {
       "@hexa/appointments-domain": ["./libs/appointments/domain/src/index.ts"],
       "@hexa/appointments-ports": ["./libs/appointments/ports/src/index.ts"],
+      "@hexa/appointments-infrastructure/memory": [
+        "./libs/appointments/infrastructure/src/memory/index.ts"
+      ],
       "@hexa/appointments-infrastructure": [
         "./libs/appointments/infrastructure/src/index.ts"
       ],
@@ -24,6 +27,9 @@
       "@hexa/appointments-ui": ["./libs/appointments/ui/src/index.ts"],
       "@hexa/appointments-feature": [
         "./libs/appointments/feature/src/index.ts"
+      ],
+      "@hexa/appointments-shell/memory": [
+        "./libs/appointments/shell/src/memory/index.ts"
       ],
       "@hexa/appointments-shell": ["./libs/appointments/shell/src/index.ts"]
     }

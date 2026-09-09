@@ -4,8 +4,8 @@
 # command lists are deliberately identical.
 #
 # Nx owns the parallelism, lefthook owns the ordering: one `run-many` lets a
-# single Nx process schedule and cache four targets, where four lefthook jobs
-# would be four processes competing for one daemon and one cache.
+# single Nx process schedule and cache all targets, where separate lefthook
+# jobs would be processes competing for one daemon and one cache.
 #
 # `LEFTHOOK=0 git push` skips all of it.
 #
@@ -24,9 +24,10 @@ pre-push:
       run: npx prettier --check .
 
     # `build` is here for what typecheck cannot reach: `tsc --noEmit` does not
-    # check Angular templates, and the AOT compiler does.
+    # check Angular templates, and the AOT compiler does. The bundle check reads
+    # that production build's graph and rejects development-only entry points.
     - name: checks
-      run: npx nx run-many -t lint typecheck test build
+      run: npx nx run-many -t lint typecheck test build verify-production-bundle
 
     # Last and alone. Nx starts `book:serve-memory` for it as a continuous
     # dependency of the inferred `e2e` target, so this is the job that boots a

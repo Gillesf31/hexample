@@ -1,23 +1,19 @@
-import { describe, expect, it } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { provideStore, Store } from '@ngrx/store';
 import { filter, firstValueFrom, take } from 'rxjs';
+import { describe, expect, it } from 'vitest';
 import {
   appointmentsFeature,
   appointmentsPageActions,
 } from '@hexa/appointments-state';
-import { provideAppointmentsShell } from './provide-appointments-shell';
+import { appointmentsRoutes } from './index';
 
-describe('provideAppointmentsShell', () => {
-  it('runs the effect with the adapters selected by the shell', async () => {
+describe('the appointments memory entry point', () => {
+  it('loads seeded appointments through the shell effect', async () => {
+    const [route] = appointmentsRoutes();
+
     TestBed.configureTestingModule({
-      providers: [
-        provideStore(),
-        provideAppointmentsShell({
-          dataSource: 'memory',
-          apiBaseUrl: 'http://unused.example',
-        }),
-      ],
+      providers: [provideStore(), ...(route.providers ?? [])],
     });
 
     const store = TestBed.inject(Store);

@@ -1,13 +1,13 @@
 import type { Routes } from '@angular/router';
 import { AppointmentsPageComponent } from '@hexa/appointments-feature';
-import type { AppointmentsConfig } from './appointments.config';
-import { provideAppointmentsShell } from './provide-appointments-shell';
+import type { AppointmentsApiConfig } from './appointments-api.config';
+import { provideAppointmentsApiShell } from './provide-appointments-api-shell';
 
-export function appointmentsRoutes(config: AppointmentsConfig): Routes {
+export function appointmentsRoutes(config: AppointmentsApiConfig): Routes {
   return [
     {
       path: '',
-      providers: [provideAppointmentsShell(config)],
+      providers: [provideAppointmentsApiShell(config)],
       children: [{ path: '', component: AppointmentsPageComponent }],
     },
   ];

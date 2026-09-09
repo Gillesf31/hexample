@@ -130,9 +130,12 @@ way to tell a key that took effect from a key that was ignored.
 
 **A static import of a lazy library is a lint error on purpose.** Importing
 `@hexa/appointments-shell` from `app.config.ts` pulls the whole feature into the
-initial bundle. Configuration reaches the shell as a function argument through the
-route's dynamic import instead. If lint refuses an import, that is usually the
-rule working.
+initial bundle. The production route dynamically imports the primary shell entry
+point; the memory build replaces that route with one importing
+`@hexa/appointments-shell/memory`. Do not replace those entry points with a
+runtime data-source branch: it makes both adapters reachable by production.
+`book:verify-production-bundle` enforces their separation from Angular's
+`stats.json`. If lint refuses an import, that is usually the rule working.
 
 **The workflow file has to pass the gate it defines.** `npx prettier --check .`
 now covers `.github/workflows/*.yml`, and Prettier rewrites double-quoted YAML
