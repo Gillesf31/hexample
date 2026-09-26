@@ -38,6 +38,31 @@ describe('filterCurrentAndFutureAppointments', () => {
     ).toEqual(['2', '3']);
   });
 
+  it('keeps appointments from earlier today when the current time is later', () => {
+    expect(
+      filterCurrentAndFutureAppointments(
+        mockAppointments,
+        new Date(2026, 6, 31, 16, 0),
+      ).map((appointment) => appointment.id),
+    ).toEqual(['2', '3']);
+  });
+
+  it('keeps an appointment starting exactly at midnight today', () => {
+    const appointment: Appointment = {
+      id: '4',
+      customerName: 'Midnight',
+      startsAt: new Date(2026, 6, 31),
+      durationMinutes: 30,
+    };
+
+    expect(
+      filterCurrentAndFutureAppointments(
+        [appointment],
+        new Date(2026, 6, 31, 16, 0),
+      ),
+    ).toEqual([appointment]);
+  });
+
   it('keeps every appointment when today is before all appointments', () => {
     expect(
       filterCurrentAndFutureAppointments(
@@ -151,6 +176,10 @@ describe('isStartingSoon', () => {
     expect(
       isStartingSoon(appointmentStartingAt(new Date(2026, 6, 31, 9, 20)), now),
     ).toBe(true);
+  });
+
+  it('announces an appointment starting now as starting soon', () => {
+    expect(isStartingSoon(appointmentStartingAt(now), now)).toBe(true);
   });
 
   it('does not announce an appointment that begins sixty-one minutes from now', () => {
