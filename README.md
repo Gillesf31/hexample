@@ -206,6 +206,12 @@ Or run it with no backend at all, on the in-memory adapter's seed data:
 npx nx serve-memory book
 ```
 
+Browse the presentational components in Storybook at `http://localhost:4400`:
+
+```sh
+npx nx storybook appointments-ui
+```
+
 ## Appointment API
 
 Start the API at `http://localhost:3000`:

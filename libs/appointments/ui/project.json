@@ -33,6 +33,33 @@
           "watch": true
         }
       }
+    },
+    "storybook": {
+      "executor": "@storybook/angular-vite:start-storybook",
+      "options": {
+        "port": 4400,
+        "configDir": "libs/appointments/ui/.storybook",
+        "styles": ["apps/book/src/styles.css"]
+      },
+      "configurations": {
+        "ci": {
+          "quiet": true
+        }
+      }
+    },
+    "build-storybook": {
+      "executor": "@storybook/angular-vite:build-storybook",
+      "outputs": ["{options.outputDir}"],
+      "options": {
+        "outputDir": "dist/storybook/appointments-ui",
+        "configDir": "libs/appointments/ui/.storybook",
+        "styles": ["apps/book/src/styles.css"]
+      },
+      "configurations": {
+        "ci": {
+          "quiet": true
+        }
+      }
     }
   }
 }
