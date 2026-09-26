@@ -1,0 +1,12 @@
+{
+  "$schema": "../../../node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "testRunner": "vitest",
+  "vitest": {
+    "configFile": "vitest.config.mts",
+    "dir": "libs/appointments/domain/src"
+  },
+  "mutate": ["libs/appointments/domain/src/**/*.ts", "!**/*.spec.ts"],
+  "htmlReporter": {
+    "fileName": "reports/mutation/domain.html"
+  }
+}

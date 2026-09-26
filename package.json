@@ -54,6 +54,8 @@
     "@playwright/test": "^1.37.0",
     "@schematics/angular": "~22.0.4",
     "@storybook/angular-vite": "^10.6.0",
+    "@stryker-mutator/core": "^10.0.0",
+    "@stryker-mutator/vitest-runner": "^10.0.0",
     "@swc/helpers": "~0.5.18",
     "@tailwindcss/postcss": "^4.3.3",
     "@typescript-eslint/utils": "^8.58.0",

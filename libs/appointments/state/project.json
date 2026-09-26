@@ -23,6 +23,13 @@
       "options": {
         "command": "npx vitest run libs/appointments/state/src"
       }
+    },
+    "test-mutation": {
+      "executor": "nx:run-commands",
+      "parallelism": false,
+      "options": {
+        "command": "npx stryker run libs/appointments/state/stryker.config.json"
+      }
     }
   }
 }

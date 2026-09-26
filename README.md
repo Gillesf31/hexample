@@ -352,6 +352,23 @@ For a coverage report across `libs/`:
 npm run test:coverage
 ```
 
+To mutation test one library:
+
+```sh
+npx nx run appointments-domain:test-mutation
+```
+
+To mutation test only affected libraries, use `npx nx affected -t test-mutation`.
+To run all three:
+
+```sh
+npx nx run-many -t test-mutation
+```
+
+Each target runs only its library's plain Vitest specs and writes an HTML report
+to `reports/mutation/<library>.html`. The shell, feature and UI specs use
+Angular's test builder and are outside these mutation targets.
+
 ## Deliberate trade-offs
 
 These are decisions, not oversights. Each has a stated trigger for revisiting.
