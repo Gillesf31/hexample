@@ -1,10 +1,10 @@
 # hexa
 
 An appointment-booking exercise whose deliverable is the _structure_, not the
-feature. Three small business rules sit behind eight Nx libraries, and that ratio
+feature. Three small business rules sit behind seven Nx libraries, and that ratio
 is deliberate — advice that would be right on a product ("this is over-built for
 what it does") is usually wrong here. What is genuinely under review is whether
-the second feature reuses `domain`, `ports` and `application` as they stand.
+the second feature reuses `domain` and `ports` as they stand.
 
 ## The rules are written down
 
@@ -121,7 +121,7 @@ AOT compiler reads the template. That is why the pre-push gate builds.
 named `eslint:lint`, which `nx run-many -t lint` does not match. Every project
 needs `"lint": { "executor": "@nx/eslint:lint" }` in its `project.json`. Check the
 project count in the output, not just that it passed. `typecheck` has the same
-shape and no inference at all behind it: ten projects, ten explicit entries.
+shape and no inference at all behind it: nine projects, nine explicit entries.
 
 **An unknown key in `lefthook.yml` is dropped without a word.** `skip_empty:` is
 not a v2 job key; lefthook parsed the file, discarded it and ran. `npx lefthook

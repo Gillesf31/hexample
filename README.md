@@ -325,8 +325,8 @@ Both are covered by that one command.
 
 `npx nx run-many -t lint` is not only a style check. `@nx/enforce-module-boundaries`
 rejects a wrong-way project dependency _and_, through `bannedExternalImports`, an
-`@angular/*` or `@ngrx/*` import into `domain`, `ports` or `application`. Adding
-one deliberately turns lint red.
+`@angular/*` or `@ngrx/*` import into `domain` or `ports`. Adding one
+deliberately turns lint red.
 
 `npx nx run-many -t typecheck` exists because Vitest transpiles rather than
 typechecks, so a type error survives a green test run. Each project runs `tsc
@@ -416,12 +416,12 @@ answer is Nx Cloud or a self-hosted remote cache, and this entry is the one that
 was wrong.
 
 **Ports return `Observable`.** `AppointmentsPort` is typed
-`Observable<Appointment[]>`, so `rxjs` sits in the ports and application
-libraries alongside the domain. This is pragmatic in an Angular app and costs
-nothing today. It stops being free if the core is ever consumed outside RxJS —
-a Node CLI, a worker — or if a port's stream semantics (does it complete? does
-it re-emit?) become part of the contract without being written down here.
-Revisit at the first non-Angular consumer.
+`Observable<Appointment[]>`, so `rxjs` sits in the ports library alongside the
+domain. This is pragmatic in an Angular app and costs nothing today. It stops
+being free if the core is ever consumed outside RxJS — a Node CLI, a worker — or
+if a port's stream semantics (does it complete? does it re-emit?) become part of
+the contract without being written down here. Revisit at the first non-Angular
+consumer.
 
 **Past appointments are filtered on the client.** The API supports
 `GET /appointments?date=YYYY-MM-DD`, but `HttpAppointmentsAdapter` fetches
@@ -445,7 +445,7 @@ report them alongside the results, not to ignore them.
 the screen through `AppointmentCardComponent` rather than through the use case,
 the store, or a selector. It derives from the appointment alone, it changes
 nothing about which appointments are returned, and exactly one component asks the
-question — routing it through `application` and `state` would add two hops that
+question — routing it through the effect and a selector would add two hops that
 carry no decision. The rule still cannot be edited from the UI layer: `ui` may
 import `domain`, and that is the only direction the boundary allows. Two things
 reverse this. A second consumer — a filter, a count in the header, anything that
@@ -457,21 +457,20 @@ output, because that needs a port.
 **Classic NgRx, not the signal store.** `@ngrx/signals/events` would keep the
 dispatch this design depends on — a component raises a named event and never
 calls a method that changes state — so the move is mechanical rather than a
-redesign, and `domain`, `ports`, `application` and `infrastructure` would not
-change by a line. That last part is the argument for doing it eventually and
-also the reason it is not urgent: it is evidence about a boundary that is
-already holding. What it costs today is Redux DevTools, which `@ngrx/signals`
-does not ship and whose third-party replacement does not yet accept this
-workspace's Angular, plus the two lines binding an event to its reducer and its
-handler, which no framework-free spec can reach. Both triggers that reverse this
-are recorded in
+redesign, and `domain`, `ports` and `infrastructure` would not change by a
+line. That last part is the argument for doing it eventually and also the reason
+it is not urgent: it is evidence about a boundary that is already holding. What
+it costs today is Redux DevTools, which `@ngrx/signals` does not ship and whose
+third-party replacement does not yet accept this workspace's Angular, plus the
+two lines binding an event to its reducer and its handler, which no
+framework-free spec can reach. Both triggers that reverse this are recorded in
 [the decision record](docs/state-management-signal-store-2026-08-09.md).
 
-**One feature, eight libraries.** Two ports, two DI tokens, an effect, a reducer
+**One feature, seven libraries.** Two ports, two DI tokens, an effect, a reducer
 and three selectors around three small rules. On a product this ratio would be
 the finding; here the structure is the deliverable. The honest test is the
-_second_ feature: if booking an appointment reuses `domain`, `ports` and
-`application` as they stand, the granularity paid off. If it needs a new library
-at every layer to add one form, `ports` should merge into `application`. The
-re-routing rule is a first, small piece of evidence: it added a domain function
-and three lines of template, and touched no other library.
+_second_ feature: if booking an appointment reuses `domain` and `ports` as they
+stand, the granularity paid off. If it needs a new library at every layer to add
+one form, `ports` should merge into `domain`. The re-routing rule is a first,
+small piece of evidence: it added a domain function and three lines of template,
+and touched no other library.
